@@ -13,8 +13,8 @@
         <br>
 
         <el-row>
-            <el-col class="text-center break">
-                {{ address }}
+            <el-col class="text-center break" style="user-select: all">
+                <p>{{ address }}</p>
             </el-col>
         </el-row>
     </el-card>
