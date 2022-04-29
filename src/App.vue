@@ -32,14 +32,29 @@
     </el-container>
 </template>
 
-<style scoped>
+<style>
     .el-container {
-        max-width:40em;
+        max-width:30rem;
         margin:0 auto;
+    }
+
+    body {
+        font-family:sans-serif;
+        font-size:17px;
+        line-height:1.25rem;
     }
 
     .text-right {
         text-align:right;
+    }
+
+    .text-center {
+        text-align:center;
+    }
+
+    li {
+        margin:0;
+        padding:0.25rem;
     }
 </style>
 

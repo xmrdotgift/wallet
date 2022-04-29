@@ -24,10 +24,6 @@
     .break {
         word-wrap: break-word;
     }
-
-    .text-center {
-        text-align:center;
-    }
 </style>
 
 <script>

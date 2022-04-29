@@ -63,32 +63,24 @@
             </el-row>
         </div>
 
-        <div v-if="isDone">
+        <div >
             <el-result
                     icon="success"
-                    title="Transaction sent!"
+                    title="Monero have been sent to your wallet!"
             >
             </el-result>
 
+
+
             <div class="text-center">
                 <h3>What's next?</h3>
-                <p>Monero is money so best is to, of course, spend it!
-                    To give you some ideas what you can purchase <strong>today</strong>, visit AcceptedHere's
+                <p>Monero is money so best is to spend it!</p>
+                    <p>To give you some ideas what you can purchase <strong>today</strong>, visit AcceptedHere's
                     <a href="https://acceptedhere.io/catalog/currency/xmr/" target="_blank">catalog of businesses accepting Monero</a>.</p>
             </div>
         </div>
     </el-card>
 </template>
-
-<style scoped>
-    .text-right {
-        text-align:right;
-    }
-
-    .text-center {
-        text-align:center;
-    }
-</style>
 
 <script>
     import { ErrorInvalidMoneroAddress } from "../errors"

@@ -40,10 +40,6 @@
     h1, h2 {
         margin:0.75em;
     }
-
-    .text-center {
-        text-align:center;
-    }
 </style>
 
 <script>
