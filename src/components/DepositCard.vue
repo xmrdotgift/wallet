@@ -1,7 +1,7 @@
 <template>
     <el-card class="box-card">
         <template #header>
-            <el-page-header content="Deposit funds to the wallet" @back="$emit('back')"></el-page-header>
+            <el-page-header content="Deposit Monero to the wallet" @back="$emit('back')"></el-page-header>
         </template>
 
         <el-row>
