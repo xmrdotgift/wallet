@@ -71,6 +71,21 @@
     const daemonSyncPeriod = 30000
     const defaultNetworkType = monerojs.MoneroNetworkType.STAGENET
 
+    const nodes = [
+        // Mainnet
+        [
+            "https://mainnet.xmr.gift:443",
+        ],
+        // Testnet
+        [
+            "https://testnet.xmr.gift:443",
+        ],
+        // Stagenet
+        [
+            "https://node.xmr.gift:443",
+        ],
+    ]
+
     export default {
         name: "App",
 
@@ -85,15 +100,6 @@
                 balance: "0",
                 error: null,
                 unlockedBalance: "0",
-                defaultDaemonConnectionConfig: {
-                    //uri: 'http://xmr.node.itzmx.com:18081',
-                    //uri: 'http://iceland1.strangled.net:18089',
-                    //uri: 'http://127.0.0.1:38081',
-                    uri: 'https://node.xmr.gift:443',
-                    //uri: 'http://stagenet.melo.tools:38081',
-                    //uri: 'http://xmr-lux.boldsuck.org:38081',
-                    proxyToWorker: proxyToWorker,
-                }
             };
         },
 
@@ -104,12 +110,20 @@
         },
 
         methods: {
-            newConnectionManager() {
-                const connection = new monerojs.MoneroRpcConnection(this.defaultDaemonConnectionConfig)
+            newConnectionManager(nodeUris) {
                 const connectionManager = new monerojs.MoneroConnectionManager(proxyToWorker)
                 connectionManager.addListener(this)
                 connectionManager.setTimeout(daemonConnectionTimeout)
-                connectionManager.setConnection(connection)
+                connectionManager.setAutoSwitch(true)
+
+                for (let i = 0; i < nodeUris.length; i++) {
+                    const connection = new monerojs.MoneroRpcConnection({
+                        uri: nodeUris[i],
+                        proxyToWorker: proxyToWorker,
+                    })
+                    connectionManager.addConnection(connection)
+                }
+
                 return connectionManager
             },
 
@@ -232,7 +246,7 @@
             const privateSpendKey = await this.wallet.getPrivateSpendKey()
             hash.set(privateSpendKey)
 
-            const connectionManager = this.newConnectionManager()
+            const connectionManager = this.newConnectionManager(nodes[networkType])
             await connectionManager.startCheckingConnection(daemonCheckPeriod)
         },
 
