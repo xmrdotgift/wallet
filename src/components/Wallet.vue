@@ -2,12 +2,6 @@
     <el-card v-if="currentCard == 'balance'" class="box-card">
         <el-row>
             <el-col class="text-center">
-                <h1>Available balance</h1>
-            </el-col>
-        </el-row>
-
-        <el-row>
-            <el-col class="text-center">
                 <h2>{{ formatBalance }} XMR</h2>
             </el-col>
         </el-row>
