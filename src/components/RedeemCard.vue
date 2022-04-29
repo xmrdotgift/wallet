@@ -1,47 +1,19 @@
 <template>
     <el-card class="box-card">
         <template #header>
-            <el-page-header content="Redeem" @back="$emit('back')"></el-page-header>
+            <el-page-header content="Redeem Monero" @back="$emit('back')"></el-page-header>
         </template>
 
         <div v-if="!isDone">
-            <!--<el-steps :active="step" align-center>
-                <el-step title="Introduction"></el-step>
-                <el-step title="Install a wallet"></el-step>
-                <el-step title="New wallet"></el-step>
-                <el-step title="Send"></el-step>
-            </el-steps>-->
-
-            <!--<div v-if="step == 0">
-                <p>To redeem the gift card, you are going to need a private wallet to which the available balance will be sent.</p>
-
-                <p>If this is your first time, follow this quick tutorial to learn how.
-                    If you already have a wallet feel free to skip to the end.</p>
-            </div>-->
-
-            <!--<div v-if="step == 1">
-                <p>Start by installing a wallet software on your mobile device. We recommend Monero.com.</p>
-
-                <h3><a href="#">Download Monero.com from App Store</a></h3>
-
-                <h3><a href="#">Download Monero.com from Google Play</a></h3>
-
-                <p>Once you have installed Monero.com continue to the next step.</p>
-            </div>-->
-
-            <!--<div v-if="step == 2">
-                <p>TODO: add a visual guide on how to create a new wallet in Monero.com.</p>
-            </div>-->
-
             <div v-if="step == 3">
-                <p>To redeem, you will need a private wallet to which the available balance will be sent.</p>
+                <p>To redeem Monero in this wallet, you are going to need a private wallet. Go to <a href="https://monero.com/wallets" target="_blank">Monero.com</a> to create a private wallet for free.</p>
 
                 <p>Here are some things to keep in mind:</p>
 
                 <ul>
-                    <li><strong>Never type the address by hand to avoid making a mistake!</strong></li>
-                    <li>The transaction is permanent. You won't be able to reverse it once it has been submitted.</li>
-                    <li>You will see the funds in your private wallet within a few minutes after submitting the transaction.</li>
+                    <li>Always copy &amp; paste your address.</li>
+                    <li>The transaction is unreversable. Make sure to double-check your address.</li>
+                    <li>You will see the Monero in your private wallet within a few minutes of submitting the transaction.</li>
                 </ul>
 
                 <el-form :model="form">
@@ -63,14 +35,12 @@
             </el-row>
         </div>
 
-        <div >
+        <div v-if="isDone">
             <el-result
                     icon="success"
                     title="Monero have been sent to your wallet!"
             >
             </el-result>
-
-
 
             <div class="text-center">
                 <h3>What's next?</h3>
