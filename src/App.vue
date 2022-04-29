@@ -1,8 +1,15 @@
 <template>
     <el-container>
+        <el-row>
+            <el-col :span="24">
+                <el-alert v-if="error" :title="error.message" type="error" />
+            </el-col>
+        </el-row>
+
         <el-header>
             <h1>xmr.gift wallet</h1>
         </el-header>
+
         <el-main>
             <el-row>
                 <el-col :span="24" class="text-right">
@@ -41,7 +48,7 @@
     import moneroutils from "./moneroutils"
     import urlparams from "./urlparams"
     import hash from "./hash"
-    import { ErrorInvalidMoneroAddress } from "./errors"
+    import {ErrorInvalidMoneroAddress, ErrorInvalidRestoreHeight, ErrorInvalidNetworkType, ErrorInvalidSeed} from "./errors"
 
     const proxyToWorker = true
     const daemonConnectionTimeout = 40000
@@ -61,6 +68,7 @@
                 isConnected: false,
                 syncProgress: 0,
                 balance: "0",
+                error: null,
                 unlockedBalance: "0",
                 defaultDaemonConnectionConfig: {
                     //uri: 'http://xmr.node.itzmx.com:18081',
@@ -179,23 +187,26 @@
             // Validate the seed if there's one set
             if (seed !== "") {
                 if (!monerojs.MoneroUtils.isValidPrivateSpendKey(seed)) {
-                    // TODO: set a user visible error!
-                    console.error("invalid seed!")
+                    let error = new ErrorInvalidSeed("Cannot load a wallet: invalid seed!")
+                    this.error = error
+                    console.error(error)
                     return
                 }
             }
 
             this.restoreHeight = urlparams.getRestoreHeight()
             if (isNaN(this.restoreHeight)) {
-                // TODO: set a user visible error!
-                console.error("invalid restore height!")
+                let error = new ErrorInvalidRestoreHeight("Cannot load a wallet: invalid restore height!")
+                this.error = error
+                console.error(error)
                 return
             }
 
             let networkType = urlparams.getNetworkType(defaultNetworkType)
             if (!monerojs.MoneroNetworkType.isValid(networkType)) {
-                // TODO: set a user visible error!
-                console.error("invalid network type!")
+                let error = new ErrorInvalidNetworkType("Cannot load a wallet: invalid network type!")
+                this.error = error
+                console.error(error)
                 return
             }
 
