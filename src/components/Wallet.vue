@@ -101,7 +101,6 @@
                 return status
             },
 
-            // TODO: pass as $props.formatBalanceFunc
             formatBalance() {
                 return MoneroUtils.atomicUnitsToXmr(this.balance)
             },
