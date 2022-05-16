@@ -157,7 +157,8 @@
 
             async sweepUnlockedBalance(address) {
                 console.debug("sweepUnlockedBalance", address)
-                if (!monerojs.MoneroUtils.isValidAddress(address, this.config.networkType)) {
+                let isValidAddress = await monerojs.MoneroUtils.isValidAddress(address, this.config.networkType)
+                if (!isValidAddress) {
                     throw new ErrorInvalidMoneroAddress("Invalid Monero address")
                 }
                 return this.wallet.sweepUnlocked({
@@ -213,7 +214,8 @@
             const seed = hash.get()
             // Validate the seed if there's one set
             if (seed !== "") {
-                if (!monerojs.MoneroUtils.isValidPrivateSpendKey(seed)) {
+                let isValidSpendKey = await monerojs.MoneroUtils.isValidPrivateSpendKey(seed)
+                if (!isValidSpendKey) {
                     let error = new ErrorInvalidSeed("Cannot load a wallet: invalid seed!")
                     this.error = error
                     console.error(error)
