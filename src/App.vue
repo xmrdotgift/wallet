@@ -33,7 +33,7 @@
 </template>
 
 <style>
-    .el-container {
+    #app {
         max-width:30rem;
         margin:0 auto;
     }
