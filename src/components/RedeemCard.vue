@@ -17,7 +17,7 @@
                 </ul>
 
                 <el-form :model="form">
-                    <el-form-item label="Destination address" :error="error" required>
+                    <el-form-item label="Destination address" :error="error">
                         <el-input v-model="form.address"></el-input>
                     </el-form-item>
                 </el-form>
