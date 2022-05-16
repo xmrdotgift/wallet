@@ -50,7 +50,7 @@
             qrImage.src = await qrcode.toDataURL(this.address, {
                 errorCorrectionLevel: 'L',
                 width: 145,
-                margin: 0,
+                margin: 4,
             })
         }
     }
