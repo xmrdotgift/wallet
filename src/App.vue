@@ -42,6 +42,8 @@
         font-family:sans-serif;
         font-size:17px;
         line-height:1.25rem;
+        background-color:var(--el-bg-color-page);
+        color:var(--el-text-color-primary);
     }
 
     .text-right {
