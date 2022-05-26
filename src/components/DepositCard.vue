@@ -10,8 +10,6 @@
             </el-col>
         </el-row>
 
-        <br>
-
         <el-row>
             <el-col class="text-center break" style="user-select: all">
                 <p>{{ address }}</p>
