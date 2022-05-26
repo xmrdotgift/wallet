@@ -6,10 +6,6 @@
             </el-col>
         </el-row>
 
-        <el-header>
-            <h1>xmr.gift wallet</h1>
-        </el-header>
-
         <el-main>
             <el-row>
                 <el-col :span="24" class="text-right">

@@ -1,5 +1,11 @@
 <template>
     <el-card v-if="currentCard == 'balance'" class="box-card">
+        <template #header>
+            <div class="card-header">
+                <h1 class="brand">xmr.gift wallet</h1>
+            </div>
+        </template>
+
         <el-row>
             <el-col class="text-center">
                 <h2>{{ formatBalance }} XMR</h2>
@@ -33,6 +39,11 @@
 <style scoped>
     h1, h2 {
         margin:0.75em;
+    }
+
+    .brand {
+        margin:0;
+        display:inline-block;
     }
 </style>
 
