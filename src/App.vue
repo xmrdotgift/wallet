@@ -63,8 +63,7 @@
 <script>
     import monerojs from "monero-javascript"
     import moneroutils from "./moneroutils"
-    import urlparams from "./urlparams"
-    import hash from "./hash"
+    import params from "./params"
     import {ErrorInvalidMoneroAddress, ErrorInvalidRestoreHeight, ErrorInvalidNetworkType, ErrorInvalidSeed} from "./errors"
 
     const proxyToWorker = true
@@ -198,7 +197,7 @@
                     // https://github.com/monero-ecosystem/monero-javascript/issues/76
                     if (this.restoreHeight == null) {
                         this.restoreHeight = await this.wallet.getDaemonHeight() - 1
-                        urlparams.setRestoreHeight(this.restoreHeight)
+                        params.setRestoreHeight(this.restoreHeight)
                     }
 
                     await this.wallet.setSyncHeight(this.restoreHeight)
@@ -213,7 +212,7 @@
             // Override the default path to monero_web_worker.js
             monerojs.LibraryUtils.setWorkerDistPath("./monero_web_worker.js")
 
-            const seed = hash.get()
+            const seed = params.getWalletSeed()
             // Validate the seed if there's one set
             if (seed !== "") {
                 let isValidSpendKey = await monerojs.MoneroUtils.isValidPrivateSpendKey(seed)
@@ -225,7 +224,7 @@
                 }
             }
 
-            this.restoreHeight = urlparams.getRestoreHeight()
+            this.restoreHeight = params.getRestoreHeight()
             if (isNaN(this.restoreHeight)) {
                 let error = new ErrorInvalidRestoreHeight("Cannot load a wallet: invalid restore height!")
                 this.error = error
@@ -233,7 +232,7 @@
                 return
             }
 
-            let networkType = urlparams.getNetworkType(defaultNetworkType)
+            let networkType = params.getNetworkType(defaultNetworkType)
             if (!monerojs.MoneroNetworkType.isValid(networkType)) {
                 let error = new ErrorInvalidNetworkType("Cannot load a wallet: invalid network type!")
                 this.error = error
@@ -246,7 +245,7 @@
             this.primaryAddress = await this.wallet.getPrimaryAddress()
 
             const privateSpendKey = await this.wallet.getPrivateSpendKey()
-            hash.set(privateSpendKey)
+            params.setWalletSeed(privateSpendKey)
 
             const connectionManager = this.newConnectionManager(nodes[networkType])
             await connectionManager.startCheckingConnection(daemonCheckPeriod)
