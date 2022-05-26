@@ -16,7 +16,7 @@
                     <li>You will see the Monero in your private wallet within a few minutes of submitting the transaction.</li>
                 </ul>
 
-                <el-form :model="form">
+                <el-form :model="form" @submit.prevent>
                     <el-form-item label="Destination address" :error="error">
                         <el-input v-model="form.address"></el-input>
                     </el-form-item>
