@@ -14,11 +14,17 @@
 
         <el-row>
             <el-col class="text-center">
-                <wallet-button
-                        :status="walletStatus"
-                        @redeem-click="currentCard = 'redeem'"
-                        @deposit-click="currentCard = 'deposit'"
-                ></wallet-button>
+                <el-button v-if="$props.status.action == 'loading'" type="primary" loading>Loading</el-button>
+
+                <el-button v-if="$props.status.action == 'connecting'" type="primary" loading>Connecting</el-button>
+
+                <el-button v-if="$props.status.action == 'syncing'" type="warning" loading>Synchronizing <span v-if="$props.status.progress > 0">&nbsp;{{ $props.status.progress }}%</span></el-button>
+
+                <el-button v-if="$props.status.action != 'loading'" @click="currentCard = 'deposit'" type="primary">Deposit</el-button>
+
+                <el-tooltip v-if="$props.status.action == 'ready' && !$props.status.empty" effect="dark" :disabled="$props.status.unlocked" content="The balance hasn't been fully unlocked yet. This process is automatic, but may take up to 20 minutes." placement="top-start">
+                    <el-button :disabled="!$props.status.unlocked" @click="currentCard = 'redeem'" type="success">Redeem</el-button>
+                </el-tooltip>
             </el-col>
         </el-row>
     </el-card>
@@ -49,7 +55,6 @@
 
 <script>
     import { MoneroUtils } from "monero-javascript"
-    import WalletButton from "./WalletButton.vue"
     import RedeemCard from "./RedeemCard.vue"
     import DepositCard from "./DepositCard.vue"
 
@@ -57,7 +62,6 @@
         name: "Wallet",
 
         components: {
-            "wallet-button": WalletButton,
             "redeem-card": RedeemCard,
             "deposit-card": DepositCard,
         },
@@ -66,10 +70,7 @@
             balance: String,
             unlockedBalance: String,
             address: String,
-            isLoaded: Boolean,
-            isConnected: Boolean,
-            isSynced: Boolean,
-            syncProgress: Number,
+            status: Object,
             sendTransactionFunc: Function,
         },
 
@@ -87,31 +88,6 @@
         },
 
         computed: {
-            walletStatus() {
-                let status = {}
-                if ( !this.isLoaded ) {
-                    status = {
-                        action: "loading",
-                    }
-                } else if ( !this.isConnected ) {
-                    status = {
-                        action: "connecting",
-                    }
-                } else if ( this.isConnected && !this.isSynced ) {
-                    status = {
-                        action: "syncing",
-                        progress: this.syncProgress,
-                    }
-                } else {
-                    status = {
-                        action: "ready",
-                        unlocked: this.balance === this.unlockedBalance,
-                        empty: this.balance === "0",
-                    }
-                }
-                return status
-            },
-
             formatBalance() {
                 return MoneroUtils.atomicUnitsToXmr(this.balance)
             },

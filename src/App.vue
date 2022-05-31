@@ -18,10 +18,7 @@
                     :balance="balance"
                     :unlockedBalance="unlockedBalance"
                     :address="primaryAddress"
-                    :isLoaded="isLoaded"
-                    :isConnected="isConnected"
-                    :isSynced="isSynced"
-                    :syncProgress="syncProgress"
+                    :status="walletStatus"
                     :sendTransactionFunc="sweepUnlockedBalance"
             ></wallet>
         </el-main>
@@ -106,7 +103,32 @@
 
             isSynced() {
                 return this.syncProgress === 100
-            }
+            },
+
+            walletStatus() {
+                let status = {}
+                if ( !this.isLoaded ) {
+                    status = {
+                        action: "loading",
+                    }
+                } else if ( !this.isConnected ) {
+                    status = {
+                        action: "connecting",
+                    }
+                } else if ( this.isConnected && !this.isSynced ) {
+                    status = {
+                        action: "syncing",
+                        progress: this.syncProgress,
+                    }
+                } else {
+                    status = {
+                        action: "ready",
+                        unlocked: this.balance === this.unlockedBalance,
+                        empty: this.balance === "0",
+                    }
+                }
+                return status
+            },
         },
 
         methods: {
