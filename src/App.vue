@@ -91,18 +91,21 @@
                 config: {},
                 wallet: null,
                 primaryAddress: null,
-                isSynced: false,
                 isConnected: false,
                 syncProgress: 0,
                 balance: "0",
-                error: null,
                 unlockedBalance: "0",
+                error: null,
             };
         },
 
         computed: {
             isLoaded() {
                 return this.wallet !== null
+            },
+
+            isSynced() {
+                return this.syncProgress === 100
             }
         },
 
@@ -167,7 +170,6 @@
             // MoneroWalletListener interface implementation
             onSyncProgress(height, startHeight, endHeight, percentDone) {
                 this.syncProgress = parseInt(percentDone * 100)
-                this.isSynced = (this.syncProgress === 100)
                 console.debug("[event] sync", this.syncProgress, "%")
             },
 
