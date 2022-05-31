@@ -105,6 +105,34 @@
                 return this.syncProgress === 100
             },
 
+            documentTitle() {
+                let title = ""
+                const status = this.walletStatus
+                switch (status.action) {
+                    case "loading":
+                        title = "Loading..."
+                        break
+
+                    case "connecting":
+                        title = "Connecting..."
+                        break
+
+                    case "syncing":
+                        title = "Synchronizing"
+                        if(status.progress > 0) {
+                            title += " " + status.progress.toString() + "%"
+                        } else {
+                            title += "..."
+                        }
+                        break
+
+                    case "ready":
+                        title = monerojs.MoneroUtils.atomicUnitsToXmr(this.balance) + " XMR"
+                        break
+                }
+                return [title, this.titleRoot].join(" | ")
+            },
+
             walletStatus() {
                 let status = {}
                 if ( !this.isLoaded ) {
@@ -129,6 +157,15 @@
                 }
                 return status
             },
+        },
+
+        watch: {
+            documentTitle: {
+                handler(val){
+                    window.document.title = val
+                },
+                immediate: true,
+            }
         },
 
         methods: {
@@ -269,6 +306,10 @@
 
             const connectionManager = this.newConnectionManager(nodes[networkType])
             await connectionManager.startCheckingConnection(daemonCheckPeriod)
+        },
+
+        beforeCreate() {
+            this.titleRoot = window.document.title
         },
 
         beforeUnmount() {
