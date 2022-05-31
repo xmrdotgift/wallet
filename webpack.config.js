@@ -47,7 +47,6 @@ module.exports = {
     }),
     new htmlWebpackPlugin({
       template: path.resolve(__dirname, "public", "index.html"),
-      favicon: "./public/favicon.ico",
     }),
     new CopyPlugin({
       patterns: [
@@ -55,6 +54,10 @@ module.exports = {
           from: "*.*",
           context: path.resolve(__dirname, "node_modules/monero-javascript/dist"),
         },
+        {
+          from: "*.png",
+          context: path.resolve(__dirname, "public/")
+        }
       ]
     }),
   ],
