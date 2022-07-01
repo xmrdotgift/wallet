@@ -228,7 +228,11 @@
 
             // MoneroWalletListener interface implementation
             onSyncProgress(height, startHeight, endHeight, percentDone) {
-                this.syncProgress = parseInt(percentDone * 100)
+                let percent = parseInt(percentDone * 100)
+                if(percent === this.syncProgress) {
+                    return
+                }
+                this.syncProgress = percent
                 console.debug("[event] sync", this.syncProgress, "%")
             },
 
