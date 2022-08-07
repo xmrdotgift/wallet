@@ -1,14 +1,18 @@
 <template>
     <el-card class="box-card">
         <template #header>
-            <el-page-header content="Deposit Monero to the wallet" @back="$emit('back')"></el-page-header>
+            <el-page-header content="Deposit" @back="$emit('back')"></el-page-header>
         </template>
 
+        <br>
+        <br>
         <el-row>
             <el-col class="text-center">
-                <canvas ref="canvas" width="145" height="145" :title="address"></canvas>
+                <canvas ref="canvas" :width="qrSize" :height="qrSize" :title="address"></canvas>
             </el-col>
         </el-row>
+
+        <br>
 
         <el-row>
             <el-col class="text-center break" style="user-select: all">
@@ -22,6 +26,10 @@
     .break {
         word-wrap: break-word;
     }
+
+    canvas {
+        border-radius:var(--el-border-radius-round);
+    }
 </style>
 
 <script>
@@ -32,6 +40,7 @@
 
         props: {
             address: String,
+            qrSize: Number,
         },
 
         emits: [
@@ -47,7 +56,7 @@
             }
             qrImage.src = await qrcode.toDataURL(this.address, {
                 errorCorrectionLevel: 'L',
-                width: 145,
+                width: this.$props.qrSize,
                 margin: 4,
             })
         }

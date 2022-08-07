@@ -1,42 +1,57 @@
 <template>
-    <el-container>
-        <el-row>
-            <el-col :span="24">
-                <el-alert v-if="error" :title="error.message" type="error" />
-            </el-col>
-        </el-row>
-
+    <el-container v-if="error">
         <el-main>
             <el-row>
-                <el-col :span="24" class="text-right">
-                    <el-tag v-if="config.networkType == 1" type="warning">TESTNET</el-tag>
-                    <el-tag v-if="config.networkType == 2" type="warning">STAGENET</el-tag>
+                <el-col :span="24">
+                    <el-alert :title="error.message" type="error" />
                 </el-col>
             </el-row>
-
-            <wallet
-                    :balance="balance"
-                    :unlockedBalance="unlockedBalance"
-                    :address="primaryAddress"
-                    :status="walletStatus"
-                    :sendTransactionFunc="sweepUnlockedBalance"
-            ></wallet>
         </el-main>
     </el-container>
+
+    <wallet
+        :balance="balance"
+        :unlockedBalance="unlockedBalance"
+        :address="primaryAddress"
+        :status="walletStatus"
+        :sendTransactionFunc="sweepUnlockedBalance"
+    ></wallet>
+
+    <p class="text-center" v-if="config.networkType > 0">
+        Using
+            <span v-if="config.networkType == 1">testnet</span>
+            <span v-if="config.networkType == 2">stagenet</span>
+            network. Your coins are worthless.
+    </p>
 </template>
 
 <style>
     #app {
         max-width:30rem;
         margin:0 auto;
+        height:100%;
+    }
+
+    h2 {
+        margin-top:1em;
+        margin-bottom:1em;
+    }
+
+    html {
+        height:100%;
+        box-sizing:border-box;
     }
 
     body {
+        box-sizing:border-box;
         font-family:sans-serif;
         font-size:17px;
-        line-height:1.25rem;
+        line-height:1.5rem;
         background-color:var(--el-bg-color-page);
-        color:var(--el-text-color-primary);
+        color:var(--el-text-color-regular);
+        padding:0;
+        margin:0;
+        height:100%;
     }
 
     .text-right {
@@ -47,9 +62,11 @@
         text-align:center;
     }
 
-    li {
+    .el-card {
+        border-radius:var(--el-border-radius-round) !important;
+        border:0 !important;
         margin:0;
-        padding:0.25rem;
+        color:var(--el-text-color-regular) !important;
     }
 </style>
 
@@ -113,6 +130,10 @@
                 let title = ""
                 const status = this.walletStatus
                 switch (status.action) {
+                    case "error":
+                        title = "Error"
+                        break
+
                     case "loading":
                         title = "Loading..."
                         break
@@ -139,7 +160,11 @@
 
             walletStatus() {
                 let status = {}
-                if ( !this.isLoaded ) {
+                if ( this.error != null ) {
+                    status = {
+                        action: "error",
+                    }
+                } else if ( !this.isLoaded ) {
                     status = {
                         action: "loading",
                     }

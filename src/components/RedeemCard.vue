@@ -1,19 +1,20 @@
 <template>
     <el-card class="box-card">
         <template #header>
-            <el-page-header content="Redeem Monero" @back="$emit('back')"></el-page-header>
+            <el-page-header content="Redeem" @back="$emit('back')"></el-page-header>
         </template>
 
         <div v-if="!isDone">
             <div v-if="step == 3">
-                <p>To redeem Monero in this wallet, you are going to need a private wallet. Go to <a href="https://monero.com/wallets" target="_blank">Monero.com</a> to create a private wallet for free.</p>
+                <p>Paste the address of your private wallet below to redeem Monero in this wallet. Go to <a href="https://monero.com/wallets" target="_blank">Monero.com</a> if you do not have a private wallet and create one for free.</p>
 
                 <p>Here are some things to keep in mind:</p>
 
                 <ul>
-                    <li>Always copy &amp; paste your address.</li>
-                    <li>The transaction is unreversable. Make sure to double-check your address.</li>
-                    <li>You will see the Monero in your private wallet within a few minutes of submitting the transaction.</li>
+                    <li>Always copy &amp; paste your wallet address.</li>
+                    <li>A transaction is irreversible. Always double-check your address before sending.</li>
+                    <li>You will be seeing Monero in your private wallet shortly after sending. However, it takes about 20 minutes to clear, and before you are able to spend it.</li>
+                    <li>Transaction fee is <strong>&lt; €0.01</strong> and will be automatically deduced from the wallet's balance. The fee goes to the volunteers who sustain the Monero network.</li>
                 </ul>
 
                 <el-form :model="form" @submit.prevent>
@@ -30,7 +31,12 @@
                 <el-col :span="12" class="text-right">
                     <el-button v-if="step > minStep" @click="step -= 1">Back</el-button>
                     <el-button v-if="step != maxStep" @click="step += 1">Next</el-button>
-                    <el-button v-if="step == maxStep" :disabled="form.address === ''" :loading="isInProgress" @click="redeemBalance" type="success">Send to my wallet</el-button>
+                    <el-button v-if="step == maxStep" :disabled="form.address === ''" :loading="isInProgress" @click="redeemBalance" round>
+                        <el-icon>
+                            <Promotion />
+                        </el-icon>
+                       <span>Send</span>
+                    </el-button>
                 </el-col>
             </el-row>
         </div>
@@ -38,19 +44,28 @@
         <div v-if="isDone">
             <el-result
                     icon="success"
-                    title="Monero have been sent to your wallet!"
             >
             </el-result>
 
             <div class="text-center">
-                <h3>What's next?</h3>
-                <p>Monero is money so best is to spend it!</p>
-                    <p>To give you some ideas what you can purchase <strong>today</strong>, visit AcceptedHere's
-                    <a href="https://acceptedhere.io/catalog/currency/xmr/" target="_blank">catalog of businesses accepting Monero</a>.</p>
+                <p>What's next? Monero is money so the best is to spend it.</p>
+                <p>To give you some idea what you can purchase today, visit AcceptedHere's
+                <a href="https://acceptedhere.io/catalog/currency/xmr/" target="_blank">catalog</a> of businesses accepting Monero.</p>
             </div>
         </div>
     </el-card>
 </template>
+
+<style scoped>
+    ul {
+        padding:0 0 0 2em;
+        margin-bottom:2em;
+    }
+    li {
+        margin:0;
+        padding:0.30em;
+    }
+</style>
 
 <script>
     import { ErrorInvalidMoneroAddress } from "../errors"
