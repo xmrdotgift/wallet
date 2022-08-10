@@ -63,7 +63,7 @@
     const daemonConnectionTimeout = 40000
     const daemonCheckPeriod = 10000
     const daemonSyncPeriod = 30000
-    const defaultNetworkType = monerojs.MoneroNetworkType.STAGENET
+    const defaultNetworkType = monerojs.MoneroNetworkType.MAINNET
 
     const nodes = [
         // Mainnet
