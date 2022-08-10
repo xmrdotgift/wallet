@@ -68,15 +68,19 @@
     const nodes = [
         // Mainnet
         [
-            "https://mainnet.xmr.gift:443",
+            "https://fallacy.fiatfaucet.com:18089",
+            "https://dewitte.fiatfaucet.com:443",
+            "https://chad.fiatfaucet.com:443",
+            "https://xmrnode1.ditatompel.com:443",
+            "https://xmr.voidnet.tech:443",
         ],
         // Testnet
         [
-            "https://testnet.xmr.gift:443",
+            "https://testnet.xmr.ditatompel.com:443",
         ],
         // Stagenet
         [
-            "https://node.xmr.gift:443",
+            "https://stagenet.xmr.ditatompel.com:443",
         ],
     ]
 
