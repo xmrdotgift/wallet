@@ -76,7 +76,7 @@
     import params from "./params"
     import {ErrorInvalidMoneroAddress, ErrorInvalidRestoreHeight, ErrorInvalidNetworkType, ErrorInvalidSeed} from "./errors"
 
-    const proxyToWorker = true
+    const proxyToWorker = false
     const daemonConnectionTimeout = 40000
     const daemonCheckPeriod = 10000
     const daemonSyncPeriod = 30000
