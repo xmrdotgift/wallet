@@ -200,7 +200,12 @@
         methods: {
             newConnectionManager(nodeUris) {
                 const connectionManager = new monerojs.MoneroConnectionManager(proxyToWorker)
-                connectionManager.addListener(this)
+                let self = this
+                connectionManager.addListener(new class extends monerojs.MoneroConnectionManagerListener {
+                    async onConnectionChanged(connection) {
+                        self.onConnectionChanged(connection)
+                    }
+                })
                 connectionManager.setTimeout(daemonConnectionTimeout)
                 connectionManager.setAutoSwitch(true)
 
@@ -239,7 +244,16 @@
 
             async newWallet(config) {
                 const wallet = await monerojs.createWalletFull(config)
-                await wallet.addListener(this)
+                let self = this
+                await wallet.addListener(new class extends monerojs.MoneroWalletListener {
+                    onSyncProgress(height, startHeight, endHeight, percentDone) {
+                        self.onSyncProgress(height, startHeight, endHeight, percentDone)
+                    }
+
+                    onBalancesChanged(newBalance, newUnlockedBalance) {
+                        self.onBalancesChanged(newBalance, newUnlockedBalance)
+                    }
+                })
                 return wallet
             },
 
@@ -270,10 +284,6 @@
                 this.unlockedBalance = newUnlockedBalance.toString(10)
                 console.debug("[event] balance", this.balance, "/", this.unlockedBalance)
             },
-
-            onNewBlock(){},
-            onOutputReceived(){},
-            onOutputSpent(){},
 
             // MoneroConnectionManagerListener
             async onConnectionChanged(connection){
