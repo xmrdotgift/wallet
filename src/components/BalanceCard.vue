@@ -39,7 +39,7 @@
 
         computed: {
             formatBalance() {
-                return MoneroUtils.atomicUnitsToXmr(this.balance).toFixed(8)
+                return MoneroUtils.atomicUnitsToXmr(this.balance)
             },
         },
     }
