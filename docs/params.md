@@ -6,7 +6,7 @@ Wallet parameters are read only once, at start. Changing a parameter has no effe
 | name |   value   |                      description                      |           default            |
 |:----:|:---------:|:-----------------------------------------------------:|:----------------------------:|
 | `h`  |   `int`   |                 wallet restore height                 | daemon's recent block height |
-| `n`  |   `int`   | network type (mainnet=`0`, testnet=`1`, stagenet=`2`) |             `2`              |
+| `n`  |   `int`   | network type (mainnet=`0`, testnet=`1`, stagenet=`2`) |             `0`              |
 | `s`  | `string`  |    base58 encoded private spend key (seed)            |             N/A              |
 
 ## Example
