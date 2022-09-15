@@ -290,21 +290,22 @@
                 this.isConnected = connection.isConnected() === true
                 console.debug("[event] connection", this.isConnected)
 
-                if (this.isConnected) {
-                    await this.wallet.setDaemonConnection(connection)
-
-                    // getDaemonHeight - 1 is here to prevent this issue:
-                    // https://github.com/monero-ecosystem/monero-javascript/issues/76
-                    if (this.restoreHeight == null) {
-                        this.restoreHeight = await this.wallet.getDaemonHeight() - 1
-                        params.setRestoreHeight(this.restoreHeight)
-                    }
-
-                    await this.wallet.setSyncHeight(this.restoreHeight)
-                    await this.wallet.startSyncing(daemonSyncPeriod)
-                } else {
+                if (!this.isConnected) {
                     await this.wallet.stopSyncing()
+                    return
                 }
+
+                await this.wallet.setDaemonConnection(connection)
+
+                // getDaemonHeight - 1 is here to prevent this issue:
+                // https://github.com/monero-ecosystem/monero-javascript/issues/76
+                if (this.restoreHeight == null) {
+                    this.restoreHeight = await this.wallet.getDaemonHeight() - 1
+                    params.setRestoreHeight(this.restoreHeight)
+                }
+
+                await this.wallet.setSyncHeight(this.restoreHeight)
+                await this.wallet.startSyncing(daemonSyncPeriod)
             }
         },
 
