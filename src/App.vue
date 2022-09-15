@@ -77,9 +77,9 @@
     import {ErrorInvalidMoneroAddress, ErrorInvalidRestoreHeight, ErrorInvalidNetworkType, ErrorInvalidSeed} from "./errors"
 
     const proxyToWorker = true
-    const daemonConnectionTimeout = 40000
-    const daemonCheckPeriod = 10000
-    const daemonSyncPeriod = 30000
+    const daemonConnectionTimeout = 120000
+    const daemonCheckPeriod = 5000
+    const daemonSyncPeriod = 10000
     const defaultNetworkType = monerojs.MoneroNetworkType.MAINNET
 
     const nodes = [
