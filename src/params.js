@@ -1,54 +1,64 @@
 import base58 from "base58-monero"
 
 export default {
-    get(param) {
-        const urlParams = new URLSearchParams(window.location.hash.substring(1))
-        if (urlParams.has(param)) {
-            return urlParams.get(param)
+    get(params, param) {
+        if (params.has(param)) {
+            return params.get(param)
         }
         return null
     },
 
-    set(param, value) {
-        const urlParams = new URLSearchParams(window.location.hash.substring(1))
-        urlParams.set(param, value)
-        window.location.hash = urlParams.toString()
+    set(params, param, value) {
+        params.set(param, value)
     },
 
-    getRestoreHeight(defaultValue) {
-        const restoreHeight = this.get("h")
+    // copy makes a new copy of src.
+    // The only purpose of copying is to trigger Vue's auto watcher.
+    copy(src){
+        return new URLSearchParams(src.toString())
+    },
+
+    getRestoreHeight(params, defaultValue) {
+        const restoreHeight = this.get(params, "h")
         if (restoreHeight == null) {
-            return (defaultValue !== undefined) ? defaultValue:null
+            return (defaultValue !== undefined) ? defaultValue : null
         }
         return parseInt(restoreHeight)
     },
 
-    setRestoreHeight(restoreHeight) {
-        this.set("h", restoreHeight)
+    setRestoreHeight(params, restoreHeight) {
+        params.set("h", restoreHeight)
+        return this.copy(params)
     },
 
-    getNetworkType(defaultValue) {
-        const networkType = this.get("n")
+    getNetworkType(params, defaultValue) {
+        const networkType = this.get(params, "n")
         if (networkType == null) {
-            return (defaultValue !== undefined) ? defaultValue:null
+            return (defaultValue !== undefined) ? defaultValue : null
         }
         return parseInt(networkType)
     },
 
-    getWalletSeed() {
-        let walletSeed = this.get("s")
+    getWalletSeed(params) {
+        let walletSeed = this.get(params, "s")
         if (walletSeed == null) {
             return ""
         }
         try {
             walletSeed = base58.decode(walletSeed).toString("hex")
-        } catch(e) {
+        } catch (e) {
             console.error(e)
         }
         return walletSeed
     },
 
-    setWalletSeed(walletSeed) {
-        this.set("s", base58.encode(Buffer.from(walletSeed, "hex")))
+    setWalletSeed(params, walletSeed) {
+        try {
+            walletSeed = base58.encode(Buffer.from(walletSeed, "hex"))
+        } catch (e) {
+            console.error(e)
+        }
+        params.set("s", walletSeed)
+        return this.copy(params)
     },
 }
