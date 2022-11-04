@@ -14,6 +14,7 @@
         :unlockedBalance="unlockedBalance"
         :address="primaryAddress"
         :status="walletStatus"
+        :params="walletParams"
         :sendTransactionFunc="sweepUnlockedBalance"
     ></wallet>
 
@@ -107,6 +108,7 @@
         data() {
             return {
                 config: {},
+                appParams: {},
                 wallet: null,
                 primaryAddress: null,
                 isConnected: false,
@@ -186,6 +188,10 @@
                 }
                 return status
             },
+
+            walletParams() {
+                return this.appParams.toString()
+            }
         },
 
         watch: {
@@ -301,11 +307,16 @@
                 // https://github.com/monero-ecosystem/monero-javascript/issues/76
                 if (this.restoreHeight == null) {
                     this.restoreHeight = await this.wallet.getDaemonHeight() - 1
-                    params.setRestoreHeight(this.restoreHeight)
+                    this.appParams = params.setRestoreHeight(this.appParams, this.restoreHeight)
                 }
 
                 await this.wallet.setSyncHeight(this.restoreHeight)
                 await this.wallet.startSyncing(daemonSyncPeriod)
+            },
+
+            clearLocationHash() {
+                const url = window.location.pathname + window.location.search
+                window.history.replaceState(null, "", url)
             }
         },
 
@@ -313,7 +324,10 @@
             // Override the default path to monero_web_worker.js
             monerojs.LibraryUtils.setWorkerDistPath("./monero_web_worker.js")
 
-            const seed = params.getWalletSeed()
+            this.appParams = new URLSearchParams(window.location.hash.substring(1))
+            this.clearLocationHash()
+
+            const seed = params.getWalletSeed(this.appParams)
             // Validate the seed if there's one set
             if (seed !== "") {
                 let isValidSpendKey = await monerojs.MoneroUtils.isValidPrivateSpendKey(seed)
@@ -325,7 +339,7 @@
                 }
             }
 
-            this.restoreHeight = params.getRestoreHeight()
+            this.restoreHeight = params.getRestoreHeight(this.appParams)
             if (isNaN(this.restoreHeight)) {
                 let error = new ErrorInvalidRestoreHeight("Cannot load a wallet: invalid restore height!")
                 this.error = error
@@ -333,7 +347,7 @@
                 return
             }
 
-            let networkType = params.getNetworkType(defaultNetworkType)
+            let networkType = params.getNetworkType(this.appParams, defaultNetworkType)
             if (!monerojs.MoneroNetworkType.isValid(networkType)) {
                 let error = new ErrorInvalidNetworkType("Cannot load a wallet: invalid network type!")
                 this.error = error
@@ -346,7 +360,7 @@
             this.primaryAddress = await this.wallet.getPrimaryAddress()
 
             const privateSpendKey = await this.wallet.getPrivateSpendKey()
-            params.setWalletSeed(privateSpendKey)
+            this.appParams = params.setWalletSeed(this.appParams, privateSpendKey)
 
             const connectionManager = this.newConnectionManager(nodes[networkType])
             await connectionManager.startCheckingConnection(daemonCheckPeriod)
