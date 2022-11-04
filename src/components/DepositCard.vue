@@ -4,15 +4,11 @@
             <el-page-header content="Deposit" @back="$emit('back')"></el-page-header>
         </template>
 
-        <br>
-        <br>
         <el-row>
             <el-col class="text-center">
                 <canvas ref="canvas" :width="qrSize" :height="qrSize" :title="address"></canvas>
             </el-col>
         </el-row>
-
-        <br>
 
         <el-row>
             <el-col class="text-center break" style="user-select: all">
