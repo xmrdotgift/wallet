@@ -372,7 +372,7 @@
         },
 
         beforeCreate() {
-            this.titleRoot = window.document.title
+            this.titleRoot = window.document.title.split(" | ").pop()
         },
 
         beforeUnmount() {
