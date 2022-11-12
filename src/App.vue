@@ -108,7 +108,7 @@
         data() {
             return {
                 config: {},
-                appParams: {},
+                appParams: new URLSearchParams(),
                 wallet: null,
                 primaryAddress: null,
                 isConnected: false,
@@ -200,7 +200,18 @@
                     window.document.title = val
                 },
                 immediate: true,
-            }
+            },
+
+            walletParams: {
+                handler(val) {
+                    if (val === "") {
+                        return
+                    }
+                    const url = window.location.pathname + window.location.search + "#" + val
+                    window.history.replaceState(null, "", url)
+                },
+                immediate: true,
+            },
         },
 
         methods: {
@@ -313,11 +324,6 @@
                 await this.wallet.setSyncHeight(this.restoreHeight)
                 await this.wallet.startSyncing(daemonSyncPeriod)
             },
-
-            clearLocationHash() {
-                const url = window.location.pathname + window.location.search
-                window.history.replaceState(null, "", url)
-            }
         },
 
         async mounted() {
@@ -325,7 +331,6 @@
             monerojs.LibraryUtils.setWorkerDistPath("./monero_web_worker.js")
 
             this.appParams = new URLSearchParams(window.location.hash.substring(1))
-            this.clearLocationHash()
 
             const seed = params.getWalletSeed(this.appParams)
             // Validate the seed if there's one set
