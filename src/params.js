@@ -12,6 +12,11 @@ export default {
         params.set(param, value)
     },
 
+    delete(params, param) {
+        params.delete(param)
+        return this.copy(params)
+    },
+
     // copy makes a new copy of src.
     // The only purpose of copying is to trigger Vue's auto watcher.
     copy(src){
@@ -60,5 +65,21 @@ export default {
         }
         params.set("s", walletSeed)
         return this.copy(params)
+    },
+
+    getCardName(params) {
+        let name = this.get(params, "!")
+        if (name == null) {
+            return ""
+        }
+        return name
+    },
+
+    setCardName(params, name) {
+        return this.set(params, "!", name)
+    },
+
+    deleteCardName(params) {
+        return this.delete(params, "!")
     },
 }
