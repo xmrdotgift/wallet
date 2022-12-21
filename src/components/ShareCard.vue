@@ -35,7 +35,7 @@
         Name: "ShareCard",
 
         props: {
-            walletParams: String,
+            walletParams: Object,
             qrSize: Number,
         },
 
@@ -60,7 +60,7 @@
         computed: {
             fullURL() {
                 const baseURL = location.protocol + '//' + location.host + location.pathname
-                return [baseURL, this.walletParams].join("#")
+                return [baseURL, this.walletParams.toString()].join("#")
             }
         }
     }

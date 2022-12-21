@@ -9,14 +9,59 @@
         </el-main>
     </el-container>
 
-    <wallet
-        :balance="balance"
-        :unlockedBalance="unlockedBalance"
-        :address="primaryAddress"
-        :status="walletStatus"
-        :params="walletParams"
-        :sendTransactionFunc="sweepUnlockedBalance"
-    ></wallet>
+    <el-container>
+        <el-header>
+            <status-panel
+                :status="walletStatus"
+            >
+            </status-panel>
+        </el-header>
+
+        <el-main>
+            <deposit-card
+                v-if="currentCard === 'deposit' && canDeposit"
+                @back="showBalanceCard"
+                :address="primaryAddress"
+                :qrSize="200"
+            ></deposit-card>
+
+            <redeem-card
+                v-else-if="currentCard === 'redeem' && canRedeem"
+                @back="showBalanceCard"
+                :redeemBalanceFunc="sweepUnlockedBalance"
+            ></redeem-card>
+
+            <share-card
+                v-else-if="currentCard === 'share' && canShare"
+                @back="showBalanceCard"
+                :walletParams="cleanedAppParams"
+                :qrSize="200"
+            ></share-card>
+
+            <balance-card
+                v-else
+                :balance="balance"
+                :status="walletStatus"
+            >
+            </balance-card>
+        </el-main>
+
+        <el-footer>
+            <el-card class="box-card">
+                <el-row>
+                    <el-col :span="8">
+                        <deposit-button :status="walletStatus" @click="showDepositCard"></deposit-button>
+                    </el-col>
+                    <el-col :span="8" class="text-center">
+                        <share-button :status="walletStatus" @click="showShareCard"></share-button>
+                    </el-col>
+                    <el-col :span="8" class="text-right">
+                        <redeem-button :status="walletStatus" @click="showRedeemCard"></redeem-button>
+                    </el-col>
+                </el-row>
+            </el-card>
+        </el-footer>
+    </el-container>
 
     <p class="text-center" v-if="config.networkType > 0">
         Using
@@ -69,6 +114,39 @@
         margin:0;
         color:var(--el-text-color-regular) !important;
     }
+
+    .el-container {
+        display:flex;
+        flex-direction: column;
+        height:100%;
+    }
+
+    .el-header {
+        flex-grow:0;
+        flex-shrink:0;
+        margin-top:0.5em;
+    }
+
+    .el-main {
+        flex-grow: 1;
+        margin-top:1em;
+    }
+
+    .el-footer {
+        flex-grow: 0;
+        flex-shrink: 0;
+        min-height:5em;
+    }
+
+    .el-button {
+        border:0 !important;
+        color:var(--el-text-color-regular) !important;
+        font-size:0.90em;
+    }
+
+    .el-button:disabled {
+        color:var(--el-text-color-disabled) !important;
+    }
 </style>
 
 <script>
@@ -76,6 +154,15 @@
     import moneroutils from "./moneroutils"
     import params from "./params"
     import {ErrorInvalidMoneroAddress, ErrorInvalidRestoreHeight, ErrorInvalidNetworkType, ErrorInvalidSeed} from "./errors"
+
+    import BalanceCard from "./components/BalanceCard.vue"
+    import RedeemCard from "./components/RedeemCard.vue"
+    import RedeemButton from "./components/RedeemButton.vue"
+    import DepositCard from "./components/DepositCard.vue"
+    import ShareCard from "./components/ShareCard.vue"
+    import DepositButton from "./components/DepositButton.vue"
+    import StatusPanel from "./components/StatusPanel.vue"
+    import ShareButton from "./components/ShareButton.vue"
 
     const proxyToWorker = true
     const daemonConnectionTimeout = 120000
@@ -105,11 +192,23 @@
     export default {
         name: "App",
 
+        components: {
+            "redeem-card": RedeemCard,
+            "redeem-button": RedeemButton,
+            "deposit-card": DepositCard,
+            "deposit-button": DepositButton,
+            "share-card": ShareCard,
+            "share-button": ShareButton,
+            "balance-card": BalanceCard,
+            "status-panel": StatusPanel,
+        },
+
         data() {
             return {
                 config: {},
                 appParams: new URLSearchParams(),
                 wallet: null,
+                currentCard: "",
                 primaryAddress: null,
                 isConnected: false,
                 syncProgress: 0,
@@ -121,7 +220,7 @@
 
         computed: {
             isLoaded() {
-                return this.wallet !== null
+                return this.wallet !== null && this.primaryAddress !== null
             },
 
             isSynced() {
@@ -189,9 +288,24 @@
                 return status
             },
 
-            walletParams() {
-                return this.appParams.toString()
-            }
+            canDeposit() {
+                const action = this.walletStatus.action
+                return action !== "loading" && action !== "error"
+            },
+
+            canShare() {
+                const action = this.walletStatus.action
+                return action !== "loading" && action !== "error"
+            },
+
+            canRedeem() {
+                const status = this.walletStatus
+                return !status.empty && status.unlocked
+            },
+
+            cleanedAppParams() {
+                return params.deleteCardName(this.appParams)
+            },
         },
 
         watch: {
@@ -202,13 +316,22 @@
                 immediate: true,
             },
 
-            walletParams: {
+            appParams: {
                 handler(val) {
-                    if (val === "") {
-                        return
+                    val.sort()
+                    let card = params.getCardName(val)
+                    const s = val.toString()
+                    if (s !== "") {
+                        const pushState = (card !== this.currentCard) && (this.currentCard !== "")
+                        const url = window.location.pathname + window.location.search + "#" + s
+                        console.log(this.currentCard, "->", card, pushState)
+                        if (pushState) {
+                            window.history.pushState(null, "", url)
+                        } else {
+                            window.history.replaceState(null, "", url)
+                        }
                     }
-                    const url = window.location.pathname + window.location.search + "#" + val
-                    window.history.replaceState(null, "", url)
+                    this.currentCard = card
                 },
                 immediate: true,
             },
@@ -324,9 +447,38 @@
                 await this.wallet.setSyncHeight(this.restoreHeight)
                 await this.wallet.startSyncing(daemonSyncPeriod)
             },
+
+            onChangedURIHash() {
+                this.appParams = new URLSearchParams(window.location.hash.substring(1))
+            },
+
+            showCard(name) {
+                this.appParams = params.setCardName(this.appParams, name)
+            },
+
+            showBalanceCard() {
+                this.appParams = params.deleteCardName(this.appParams)
+            },
+
+            showDepositCard() {
+                this.showCard("deposit")
+            },
+
+            showRedeemCard() {
+                this.showCard("redeem")
+            },
+
+            showShareCard() {
+                this.showCard("share")
+            },
         },
 
         async mounted() {
+            window.addEventListener("hashchange", () => {
+                console.log("hash changed!")
+                this.onChangedURIHash()
+            })
+
             // Override the default path to monero_web_worker.js
             monerojs.LibraryUtils.setWorkerDistPath("./monero_web_worker.js")
 
