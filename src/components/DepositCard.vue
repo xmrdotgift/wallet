@@ -10,9 +10,11 @@
             </el-col>
         </el-row>
 
+        <br>
+
         <el-row>
-            <el-col class="text-center break" style="user-select: all">
-                <p>{{ address }}</p>
+            <el-col>
+                <copy-input :text="address"></copy-input>
             </el-col>
         </el-row>
     </el-card>
@@ -31,8 +33,14 @@
 <script>
     import qrcode from "qrcode"
 
+    import CopyInput from "./CopyInput.vue"
+
     export default {
         Name: "DepositCard",
+
+        components: {
+            "copy-input": CopyInput,
+        },
 
         props: {
             address: String,

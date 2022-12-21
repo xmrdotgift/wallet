@@ -10,9 +10,11 @@
             </el-col>
         </el-row>
 
+        <br>
+
         <el-row>
-            <el-col class="text-center break" style="user-select: all">
-                <p>{{ fullURL }}</p>
+            <el-col>
+                <copy-input :text="fullURL"></copy-input>
             </el-col>
         </el-row>
     </el-card>
@@ -31,8 +33,14 @@
 <script>
     import qrcode from "qrcode"
 
+    import CopyInput from "./CopyInput.vue"
+
     export default {
         Name: "ShareCard",
+
+        components: {
+            "copy-input": CopyInput,
+        },
 
         props: {
             walletParams: Object,
