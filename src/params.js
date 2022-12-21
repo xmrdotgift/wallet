@@ -9,12 +9,15 @@ export default {
     },
 
     set(params, param, value) {
-        params.set(param, value)
+        const cp = this.copy(params)
+        cp.set(param, value)
+        return cp
     },
 
     delete(params, param) {
-        params.delete(param)
-        return this.copy(params)
+        const cp = this.copy(params)
+        cp.delete(param)
+        return cp
     },
 
     // copy makes a new copy of src.
@@ -32,8 +35,7 @@ export default {
     },
 
     setRestoreHeight(params, restoreHeight) {
-        params.set("h", restoreHeight)
-        return this.copy(params)
+        return this.set(params, "h", restoreHeight)
     },
 
     getNetworkType(params, defaultValue) {
@@ -63,8 +65,7 @@ export default {
         } catch (e) {
             console.error(e)
         }
-        params.set("s", walletSeed)
-        return this.copy(params)
+        return this.set(params, "s", walletSeed)
     },
 
     getCardName(params) {
